@@ -5,6 +5,7 @@ fn main(root : pub Field, index : Field, secret: Field, priv_key: Field, proposa
     let nullifier = std::hash::pedersen([root, priv_key, proposalId]);
 
     assert(root == std::merkle::compute_merkle_root(note_commitment[0], index, hash_path));
+   
     nullifier[0]
 }
 
@@ -31,5 +32,7 @@ fn test_main() {
 
     let hash_path = [commitment_1, right_branch];
     // (Root, Index, Secret, priv_key, proposal_id, hash_path,)
-    main(root, 0, 9, 0, 0,hash_path);
+    let output = main(root, 0, 9, 0, 0,hash_path);
+    std::println("Output");
+    std::println(output);
 }

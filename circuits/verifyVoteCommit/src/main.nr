@@ -1,18 +1,13 @@
 use dep::std;
 
-fn main(root : pub Field, index : Field, secret: Field, priv_key: Field, proposalId: pub Field, hash_path : [Field; 2], voteCommit: pub Field, vote: Field) -> pub [Field; 2] {
+fn main(root : pub Field, index : Field, secret: Field, priv_key: Field, proposalId: pub Field, hash_path : [Field; 2], voteCommit: pub Field, vote: pub Field) -> pub Field {
     let note_commitment = std::hash::pedersen([priv_key, secret]);
     let nullifier = std::hash::pedersen([priv_key, proposalId, voteCommit]);
     assert(root == std::merkle::compute_merkle_root(note_commitment[0], index, hash_path));
     assert(vote as u8 <= 1);
     assert(voteCommit == std::hash::pedersen([priv_key, proposalId, vote])[0]);
     
-    if (vote ==  1) {
-        [nullifier[0], 1]
-    } else {
-        [nullifier[0], 0]
-    }
-    
+    nullifier[0]
 }
 
 #[test]
@@ -38,6 +33,11 @@ fn test_main() {
     // priv_key, proposalID, voteå
     let voteCommit = std::hash::pedersen([0, 0, 1])[0];
     let hash_path = [commitment_1, right_branch];
+
+    std::println("Vote Commit");
+    std::println(voteCommit);
     // (Root, Index, Secret, priv_key, proposal_id, hash_path, voteComit, vote)
-    main(root, 0, 9, 0, 0,hash_path, voteCommit, 1);
+    let output = main(root, 0, 9, 0, 0,hash_path, voteCommit, 1);
+    std::println("Output");
+    std::println(output);
 }
